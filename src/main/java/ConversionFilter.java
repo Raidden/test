@@ -8,7 +8,7 @@ public class ConversionFilter extends FilterFramework {
          *************************************************************************************/
 
         int MeasurementLength = 8; // This is the length of all measurements
-        // (including time) in bytes
+                                   // (including time) in bytes
         int IdLength = 4; // This is the length of IDs in the byte stream
 
         byte databyte = 0; // This is the data byte read from the stream
@@ -17,7 +17,7 @@ public class ConversionFilter extends FilterFramework {
         byte[] alldata = new byte[8];
 
         long measurement; // This is the word used to store all measurements -
-        // conversions are illustrated.
+                          // conversions are illustrated.
         int id; // This is the measurement id
         int i; // This is a loop counter
 
@@ -25,7 +25,6 @@ public class ConversionFilter extends FilterFramework {
          * First we announce to the world that we are alive...
          **************************************************************/
 
-        System.out.println("\n" + this.getName() + "::Conversion Reading ");
 
         while (true) {
             try {
@@ -37,30 +36,31 @@ public class ConversionFilter extends FilterFramework {
 
                 id = 0;
 
+                //System.out.print(this.getName() + "::Conversion Reading (x " + IdLength + ") ");
                 for (i = 0; i < IdLength; i++) {
+
                     databyte = ReadFilterInputPort(); // This is where we read
-                    // the byte from the
-                    // stream...
+                                                      // the byte from the
+                                                      // stream...
 
                     bytesread++;
-
+                   // System.out.print(databyte + " ");
                     id = id | (databyte & 0xFF); // We append the byte on to
-                    // ID...
+                                                 // ID...
 
                     if (i != IdLength - 1) // If this is not the last byte, then
-                    // slide the
+                                           // slide the
                     { // previously appended byte to the left by one byte
                         id = id << 8; // to make room for the next byte we
-                        // append to the ID
+                                      // append to the ID
 
                     } // if
 
                     bytesread++; // Increment the byte count
 
-
                     WriteFilterOutputPort(databyte); // directly write the ID
-                    // since we're not changing
-                    // that one
+                                                     // since we're not changing
+                                                     // that one
                     byteswritten++;
 
                 } // for
@@ -81,26 +81,29 @@ public class ConversionFilter extends FilterFramework {
 
                 measurement = 0;
 
+                //System.out.print("\n" + this.getName() + " Conversion Reading (x " + MeasurementLength + ")");
                 for (i = 0; i < MeasurementLength; i++) {
                     databyte = ReadFilterInputPort();
+                   // System.out.print(databyte + " ");
                     measurement = measurement | (databyte & 0xFF); // We append
-                    // the byte
-                    // on to
-                    // measurement...
+                                                                   // the byte
+                                                                   // on to
+                                                                   // measurement...
 
                     if (i != MeasurementLength - 1) // If this is not the last
-                    // byte, then slide the
+                                                    // byte, then slide the
                     { // previously appended byte to the left by one byte
                         measurement = measurement << 8; // to make room for the
-                        // next byte we append
-                        // to the
-                        // measurement
+                                                        // next byte we append
+                                                        // to the
+                                                        // measurement
                     } // if
 
                     bytesread++; // Increment the byte count
                     alldata[i] = databyte;
                 } // if
 
+               // System.out.println();
                 /****************************************************************************
                  * // Here we look for an ID of 4 which indicates this is a
                  * temperature measurement.
@@ -128,7 +131,7 @@ public class ConversionFilter extends FilterFramework {
 
                 else if (id == 2) {
                     double meters = (Double.longBitsToDouble(measurement)) * 0.3048;
-
+                  
                     byte[] result = new byte[8];
                     long lng = Double.doubleToLongBits(meters);
                     for (int b = 0; b < 8; b++) {
@@ -137,7 +140,10 @@ public class ConversionFilter extends FilterFramework {
                         byteswritten++;
 
                     }
-                } else {
+                }
+                
+                
+                else {
                     for (int b = 0; b < 8; b++) {
                         WriteFilterOutputPort(alldata[b]);
                         byteswritten++;
@@ -151,9 +157,11 @@ public class ConversionFilter extends FilterFramework {
              * the input stream (duh). At this point, the filter ports are
              * closed and a message is written letting the user know what is
              * going on.
-             ********************************************************************************/ catch (EndOfStreamException e) {
+             ********************************************************************************/
+
+            catch (EndOfStreamException e) {
                 ClosePorts();
-                System.out.print("\n" + this.getName() + "::Conversion Exiting; bytes read: " + bytesread + "; bytes written: " + byteswritten);
+                System.out.print("\n" + this.getName() + ":: Conversion Exiting; bytes read: " + bytesread + "; bytes written: " + byteswritten + "\n");
                 break;
 
             } // catch

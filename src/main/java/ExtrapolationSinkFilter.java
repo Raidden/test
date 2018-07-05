@@ -1,30 +1,29 @@
 
 /******************************************************************************************************************
- * File:SinkFilter.java
- * Course: 17655
- * Project: Assignment 1
- * Copyright: Copyright (c) 2003 Carnegie Mellon University
- * Versions:
- *	1.0 November 2008 - Sample Pipe and Filter code (ajl).
- *
- * Description:
- *
- * This class serves as an example for using the SinkFilterTemplate for creating a sink filter. This particular
- * filter reads some input from the filter's input port and does the following:
- *
- *	1) It parses the input stream and "decommutates" the measurement ID
- *	2) It parses the input steam for measurments and "decommutates" measurements, storing the bits in a long word.
- *
- * This filter illustrates how to convert the byte stream data from the upstream filterinto useable data found in
- * the stream: namely time (long type) and measurements (double type).
- *
- *
- * Parameters: 	None
- *
- * Internal Methods: None
- *
- ******************************************************************************************************************/
-
+* File:SinkFilter.java
+* Course: 17655
+* Project: Assignment 1
+* Copyright: Copyright (c) 2003 Carnegie Mellon University
+* Versions:
+*	1.0 November 2008 - Sample Pipe and Filter code (ajl).
+*
+* Description:
+*
+* This class serves as an example for using the SinkFilterTemplate for creating a sink filter. This particular
+* filter reads some input from the filter's input port and does the following:
+*
+*	1) It parses the input stream and "decommutates" the measurement ID
+*	2) It parses the input steam for measurments and "decommutates" measurements, storing the bits in a long word.
+*
+* This filter illustrates how to convert the byte stream data from the upstream filterinto useable data found in
+* the stream: namely time (long type) and measurements (double type).
+*
+*
+* Parameters: 	None
+*
+* Internal Methods: None
+*
+******************************************************************************************************************/
 import java.util.*; // This class is used to interpret time words
 import java.util.Map.Entry;
 import java.io.DataInputStream;
@@ -43,7 +42,7 @@ public class ExtrapolationSinkFilter extends FilterFramework {
          * easily printed to the terminal.
          *************************************************************************************/
 
-        String fileName = "OutputB.dat"; // Input data file.
+        String fileName = "OutputC.dat"; // Input data file.
         Vector<Pipeframe> alldata = new Vector<Pipeframe>();
 
         HashMap<String, Double> data = new LinkedHashMap<String, Double>();
@@ -56,7 +55,7 @@ public class ExtrapolationSinkFilter extends FilterFramework {
         }
 
         int MeasurementLength = 8; // This is the length of all measurements
-        // (including time) in bytes
+                                   // (including time) in bytes
         int IdLength = 4; // This is the length of IDs in the byte stream
 
         byte timebyte;
@@ -64,7 +63,7 @@ public class ExtrapolationSinkFilter extends FilterFramework {
         int bytesread = 0; // This is the number of bytes read from the stream
 
         long measurement; // This is the word used to store all measurements -
-        // conversions are illustrated.
+                          // conversions are illustrated.
         int id; // This is the measurement id
         int i; // This is a loop counter
         String filestring = "";
@@ -73,7 +72,7 @@ public class ExtrapolationSinkFilter extends FilterFramework {
          * First we announce to the world that we are alive...
          **************************************************************/
 
-        System.out.print("\n" + this.getName() + "::Sink Reading ");
+        System.out.print("\n" + this.getName() + ":: Sink Reading \n");
 
         boolean n = true;
         Pipeframe f = new Pipeframe(0.0, 0.0, 0.0, 0.0);
@@ -89,17 +88,17 @@ public class ExtrapolationSinkFilter extends FilterFramework {
 
                 for (i = 0; i < IdLength; i++) {
                     databyte = ReadFilterInputPort(); // This is where we read
-                    // the byte from the
-                    // stream...
-
+                                                      // the byte from the
+                                                      // stream...
+                    //System.out.print(databyte + " ");
                     id = id | (databyte & 0xFF); // We append the byte on to
-                    // ID...
+                                                 // ID...
 
                     if (i != IdLength - 1) // If this is not the last byte, then
-                    // slide the
+                                           // slide the
                     { // previously appended byte to the left by one byte
                         id = id << 8; // to make room for the next byte we
-                        // append to the ID
+                                      // append to the ID
 
                     } // if
 
@@ -125,23 +124,23 @@ public class ExtrapolationSinkFilter extends FilterFramework {
                 for (i = 0; i < MeasurementLength; i++) {
                     databyte = ReadFilterInputPort();
                     measurement = measurement | (databyte & 0xFF); // We append
-                    // the byte
-                    // on to
-                    // measurement...
+                                                                   // the byte
+                                                                   // on to
+                                                                   // measurement...
 
                     if (i != MeasurementLength - 1) // If this is not the last
-                    // byte, then slide the
+                                                    // byte, then slide the
                     { // previously appended byte to the left by one byte
                         measurement = measurement << 8; // to make room for the
-                        // next byte we append
-                        // to the
-                        // measurement
+                                                        // next byte we append
+                                                        // to the
+                                                        // measurement
                     } // if
 
                     bytesread++; // Increment the byte count
 
                 } // if
-
+                //System.out.println();
                 /****************************************************************************
                  * // Here we look for an ID of 0 which indicates this is a time
                  * measurement. // Every frame begins with an ID of 0, followed
@@ -158,7 +157,8 @@ public class ExtrapolationSinkFilter extends FilterFramework {
                 if (id == 0) {
 
                     if (!n) {
-                        // System.out.println(f.time + " " + f.temperature + " " + f.altitude + " " + f.pressure);
+                        // System.out.println(f.time + " " + f.temperature + " "
+                        // + f.altitude + " " + f.pressure);
                         alldata.add(new Pipeframe(f.time, f.temperature, f.altitude, f.pressure));
                         f = new Pipeframe(0.0, 0.0, 0.0, 0.0);
 
@@ -201,7 +201,7 @@ public class ExtrapolationSinkFilter extends FilterFramework {
                     // System.out.println(" " + f.time + " " + f.temperature+ "
                     // " + f.altitude+ " " + f.pressure);
                 } // if
-                // System.out.print( "\n" );
+                  // System.out.print( "\n" );
 
             } // try
 
@@ -210,7 +210,9 @@ public class ExtrapolationSinkFilter extends FilterFramework {
              * the input stream (duh). At this point, the filter ports are
              * closed and a message is written letting the user know what is
              * going on.
-             ********************************************************************************/ catch (EndOfStreamException e) {
+             ********************************************************************************/
+
+            catch (EndOfStreamException e) {
 
                 // TODO
 
@@ -230,7 +232,7 @@ public class ExtrapolationSinkFilter extends FilterFramework {
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
-                System.out.print("\n" + this.getName() + "::Sink Exiting; bytes read: " + bytesread);
+                System.out.print("\n" + this.getName() + ":: Extrapolation Sink Exiting; bytes read: " + bytesread);
                 break;
 
             } // catch
@@ -252,7 +254,6 @@ public class ExtrapolationSinkFilter extends FilterFramework {
             i++;
         }
 
-
         boolean anything_valid = false;
         i = 0;
         for (i = 1; i < array.length - 1; i++) {
@@ -262,6 +263,41 @@ public class ExtrapolationSinkFilter extends FilterFramework {
             }
         }
 
+        if (array[0].pressure - array[1].pressure > -10 && array[0].pressure - array[1].pressure < 10) {
+            array[0].valid = true;
+            anything_valid = true;
+        }
+
+        if (array[array.length - 1].pressure - array[array.length - 2].pressure > -10
+                && array[array.length - 1].pressure - array[array.length - 2].pressure < 10) {
+            array[array.length - 1].valid = true;
+            anything_valid = true;
+        }
+
+        String wildpoints = "";
+        for (i = 0; i < array.length; i++) {
+            if (!array[i].valid){
+                TimeStamp.setTimeInMillis(Double.doubleToLongBits(array[i].time));
+                wildpoints = wildpoints + TimeStampFormat.format(TimeStamp.getTime()) + " "
+                        + String.format("%.5f", array[i].temperature) + " " + String.format("%.5f", array[i].altitude) + " "
+                        + String.format("%.5f", array[i].pressure) + "\n";
+
+            }
+        }
+        DataOutputStream wildpointsout = null;
+
+        try {
+            wildpointsout = new DataOutputStream(new FileOutputStream("PressureWildPoints.dat"));
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+        }
+
+        try {
+            wildpointsout.writeBytes(wildpoints);
+        } catch (IOException e2) {
+            e2.printStackTrace();
+        }
+
         if (!anything_valid) {
             return "";
         }
@@ -269,24 +305,22 @@ public class ExtrapolationSinkFilter extends FilterFramework {
         if (!array[0].valid && array[1].valid) {
             array[0] = array[1];
             array[i].extrapolated = true;
-            //System.out.println("0");
+            // System.out.println("0");
         }
 
         if (!array[array.length - 1].valid && array[array.length - 2].valid) {
             array[array.length - 1] = array[array.length - 2];
             array[array.length - 1].extrapolated = true;
-            //System.out.println(array.length-1);
+            // System.out.println(array.length-1);
         }
 
-
-        //int x = 0;
+        // int x = 0;
         boolean changed = true;
         while (changed) {
             // x++;
             // System.out.println("Round " + x);
 
             changed = false;
-
 
             for (i = 1; i < array.length - 1; i++) {
                 if (!array[i].valid) {
@@ -311,9 +345,7 @@ public class ExtrapolationSinkFilter extends FilterFramework {
                 }
             }
 
-
         }
-
 
         String output = "";
         for (i = 0; i < array.length - 1; i++) {
@@ -321,7 +353,9 @@ public class ExtrapolationSinkFilter extends FilterFramework {
                 return "";
             }
             TimeStamp.setTimeInMillis(Double.doubleToLongBits(array[i].time));
-            output = output + TimeStampFormat.format(TimeStamp.getTime()) + " " + String.format("%.5f", array[i].temperature) + " " + String.format("%.5f", array[i].altitude) + " " + String.format("%.5f", array[i].pressure);
+            output = output + TimeStampFormat.format(TimeStamp.getTime()) + " "
+                    + String.format("%.5f", array[i].temperature) + " " + String.format("%.5f", array[i].altitude) + " "
+                    + String.format("%.5f", array[i].pressure);
             if (array[i].extrapolated == true) {
                 output = output + "*";
             }

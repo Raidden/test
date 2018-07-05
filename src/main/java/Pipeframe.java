@@ -15,4 +15,5 @@ public class Pipeframe {
         valid = false;
         extrapolated = false;
     }
+
 }

@@ -140,7 +140,7 @@ public class SinkFilter extends FilterFramework
 
 				if ( id == 2 )
 				{
-					System.out.print( TimeStampFormat.format(TimeStamp.getTime()) + " ID = " + id + " " + Double.longBitsToDouble(measurement) + "\n" );
+			//		System.out.print( TimeStampFormat.format(TimeStamp.getTime()) + " ID = " + id + " " + Double.longBitsToDouble(measurement) + "\n" );
 
 				} // if
 
@@ -157,7 +157,7 @@ public class SinkFilter extends FilterFramework
 			catch (EndOfStreamException e)
 			{
 				ClosePorts();
-				System.out.print( "\n" + this.getName() + "::Sink Exiting; bytes read: " + bytesread );
+				//System.out.print( "\n" + this.getName() + "::Sink Exiting; bytes read: " + bytesread );
 				break;
 
 			} // catch

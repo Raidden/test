@@ -21,10 +21,13 @@ import java.io.*; // note we must add this here since we use BufferedReader clas
 
 public class SourceFilter extends FilterFramework
 {
-	public void run()
-    {
+    public String fileName;
+	public SourceFilter(String string) {
+	    fileName = string;
+    }
 
-		String fileName = "/home/bill/IdeaProjects/RESA/src/main/resources/FlightData.dat";	// Input data file.
+    public void run()
+    {
 		int bytesread = 0;					// Number of bytes read from the input file.
 		int byteswritten = 0;				// Number of bytes written to the stream.
 		DataInputStream in = null;			// File stream reference.
@@ -50,7 +53,7 @@ public class SourceFilter extends FilterFramework
 				bytesread++;
 				WriteFilterOutputPort(databyte);
 				byteswritten++;
-
+                
 			} // while
 
 		} //try
